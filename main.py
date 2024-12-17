@@ -7,7 +7,8 @@ def main_menu():
         print("[2] Buy Stock")
         print("[3] Sell Stock")
         print("[4] Calculate New Avg Price")
-        print("[5] Calculate Invested Value")
+        print("[5] Calculate Net Gain Value")
+        print("[6] Calculate Dividend")
         print("[0] Exit")
 
         choise = input("Enter your choise: ")
@@ -21,7 +22,9 @@ def main_menu():
         elif choise == "4":
             calculate_new_avg_price()
         elif choise == "5":
-            calculate_invested_value()
+            calculate_net_gain_value()
+        elif choise == "6":
+            calculate_dividend()
         elif choise == "0":
             print("Exiting...")
             break

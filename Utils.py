@@ -56,11 +56,12 @@ def sell_stock():
         return
 
     try:
-        lot = int(input("Enter number of lots to sell (or '0' to go back): "))
+        stock = stocks[symbol]
+
+        lot = int(input(f"You have {stock.lot} lots. Enter number of lots to sell (or '0' to go back): "))
         if lot == 0:
             return
         
-        stock = stocks[symbol]
         if lot > stock.lot:
             print(f"Cannot sell more than owned. You have {stock.lot} lots.")
             return
@@ -85,14 +86,14 @@ def calculate_new_avg_price():
         return
 
     try:
-        new_lot = int(input("Enter number of lots you intend to buy (or '0' to go back): "))
+        stock = stocks[symbol]
+
+        new_lot = int(input(f"You have {stock.lot} lots. Enter number of lots you intend to buy (or '0' to go back): "))
         if new_lot == 0:
             return
         new_price = float(input("Enter purchase price per lot you intend to buy (or '0' to go back): "))
         if new_price == 0:
             return
-        
-        stock = stocks[symbol]
 
         total_investment_before = stock.avg_price * stock.lot
         total_investment_new_purchase = new_price * new_lot
@@ -107,7 +108,47 @@ def calculate_new_avg_price():
 
     input("\nPress Enter to return to the main menu...")
 
-def calculate_invested_value():
+def calculate_net_gain_value():
+    symbol = input("Enter stock symbol you want to sell (or '0' to go back): ").upper()
+    if symbol == "0":
+        return
+    if symbol not in stocks:
+        print("Stock not found in portfolio.")
+        return
+
+    try:
+        while True:
+            stock = stocks[symbol]
+
+            lots = int(input(f"You have {stock.lot} lots. Enter number of lots you want to sell (or '0' to go back): "))
+            if lots == 0:
+                return
+
+
+            if lots > stock.lot:
+                print(f"The maximum lots you have for {symbol} is {stock.lot} lots.\n")
+            else:
+                break  # Exit loop if the entered lots are valid
+
+        sell_price = float(input("Enter sell price (or '0' to go back): "))
+        if sell_price == 0:
+            return
+
+        shares = lots * 100
+        total_purchase = stock.avg_price * shares
+        total_selling = sell_price * shares
+        tax = total_selling * 0.0025
+        net_total_selling = total_selling - tax
+        net_gain = net_total_selling - total_purchase
+        perc_gain = round((net_gain / total_purchase) * 100, 2)
+
+        print(f"If you sell {lots} lots of {symbol} at price {sell_price}, you will gain :\n - Total value {format_currency(net_total_selling)} \n - With profit {format_currency(net_gain)} \n - Increased by {perc_gain}% ")
+    except ValueError:
+        print("Invalid input. Please enter a number.")
+
+    input("\nPress Enter to return to the main menu...")
+
+def calculate_dividend():
     symbol = input("Enter stock symbol (or '0' to go back): ").upper()
     if symbol == "0":
         return
@@ -116,11 +157,16 @@ def calculate_invested_value():
         return
 
     try:
-        stock = stocks[symbol]
-        invested_value = stock.avg_price * stock.lot * 100
-        formatted_value = format_currency(invested_value)
+        price = int(input("Enter dividend price per share in rupiah (or '0' to go back): "))
+        if price == 0:
+            return
 
-        print(f"{symbol} initial stock value was around {formatted_value}")
+        stock = stocks[symbol]
+
+        shares = stock.lot * 100
+        total_dividend = price * shares
+
+        print(f"You have {shares} shares of {symbol} and will receive dividend {format_currency(total_dividend)}")
     except ValueError:
         print("Invalid input. Please enter a number.")
 
